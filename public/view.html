@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+<body>
+    <div>
+        <br>
+        <a href="/">
+            <button type="submit " class="w-40 h-16 border mr-10 bg-slate-300 hover:bg-slate-400 float-right" >HOME </button>
+            
+        </a> 
+    <a href="/view">
+        <button type="submit " class="w-40 h-16 border mr-10 bg-slate-300 hover:bg-slate-400 float-right" >VIEW TASK </button>
+        
+    </a> 
+
+
+    <h2 class="text-2xl font-semibold text-lime-600 ml-10 mt-24">All tasks in todo list</h2>
+
+    <div class="mt-5 mx-auto w-[80%] bg-white p-6 rounded-lg">
+        <table class="w-full table-auto border-collapse">
+            <thead>
+                <tr>
+                    <th class="border px-4 py-2">ID</th>
+                    <th class="border px-4 py-2">Title</th>
+                    
+                    <th class="border px-4 py-2">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="tasksTable">
+                <!-- Tasks will be dynamically loaded here -->
+            </tbody>
+        </table>
+
+<!-- on loading the page fetch request is send ,which returns tasks[],and is converted into json format,
+    the above described table area is selected and it's inner is made empty ,then for elements(stored as object) the loop is executed-->
+
+
+        <script>
+            async function loadTasks() {
+                try {
+                    const response = await fetch('/api/tasks');
+                    const tasks = await response.json();
+                    const tasksTable = document.getElementById('tasksTable');
+                    tasksTable.innerHTML = "";
+                    tasks.forEach(task => {
+                        tasksTable.innerHTML += `
+                            <tr>
+                                <td class="border px-4 py-2">${task.id}</td>
+                                <td class="border px-4 py-2">${task.title}</td>
+                                
+                                <td class="border px-4 py-2">
+                                    <a href="/task/${task.id}" class="bg-lime-400  text-white px-2 py-1 ml-6 rounded">Update</a>
+                                    <form method="POST" action="/deletetask/${task.id}" class="inline">
+                                        <button type="submit" class="bg-sky-600 text-white px-2 py-1 ml-6 rounded">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                } catch (error) {
+                    console.error('Error loading tasks:', error);
+                }
+            }
+    
+            document.addEventListener('DOMContentLoaded', loadTasks); 
+            // .addEventListener calls the loadTasks function on loading pages
+        </script>
+
+</body>
+</html>
